@@ -104,7 +104,7 @@ const Projects: React.FC = () => {
               flexDirection: "column",
               justifyContent: "space-between",
               height: "100%",
-            }} // Ensure the card takes full height
+            }} // Ensure card takes full height
           >
             <div>
               <div
