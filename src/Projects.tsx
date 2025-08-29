@@ -16,7 +16,7 @@ const Projects: React.FC = () => {
     {
       title: "Plume",
       description:
-        "HackMIT's all-in-one platform for managing hackathons; Includes application portal, check in process, project submission, judging platform, streamlined bulk admin tools, etc.; Led team of 10 to build the MVP (and beyond)",
+        "HackMIT's all-in-one platform for managing hackathons; Includes application portal, check in process, project submission, judging platform, streamlined bulk admin tools, etc.; Led team of 15 to build the MVP (and beyond)",
       technologies: [
         "React",
         "Typescript",
