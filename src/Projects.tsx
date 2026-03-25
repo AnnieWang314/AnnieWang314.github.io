@@ -14,6 +14,35 @@ interface Project {
 const Projects: React.FC = () => {
   const projects: Project[] = [
     {
+      title: "Thermominator",
+      description:
+        "Personal heat monitor built as a 6.900 team project; Developed firmware state machine in C++ with modem, light sleep, and deep sleep modes for ESP32-C3 power management; Integrated WiFi communication, sensors, LCD display, battery management, and backend server connectivity",
+      technologies: ["C++", "Firmware", "Embedded Systems", "IoT"],
+    },
+    {
+      title: "FPGAceTime",
+      description:
+        "6.205 final project focused on real-time FPGA communication; Designed RTL-level video and audio serialization pipeline in SystemVerilog for 25MHz transmission between two FPGAs; Optimized signal integrity with differential signaling across PMOD interfaces under power bank constraints",
+      technologies: ["SystemVerilog", "FPGA", "RTL Design", "Digital Systems"],
+      links: {
+        demo: "https://www.youtube.com/watch?si=nJwFsP9LTPXn7uC-&v=gpY-w5pYmGA&feature=youtu.be",
+      },
+    },
+    {
+      title: "Somniac",
+      description:
+        "Headband to prevent teeth grinding; Collected raw surface EMG data and extracted FFT-based features in Python; Designed custom circuits, firmware, BLE integration, and a low-power hardware system for continuous wearable use",
+      technologies: [
+        "Embedded Systems",
+        "Signal Processing",
+        "Firmware",
+        "BLE",
+      ],
+      links: {
+        demo: "https://docs.google.com/presentation/d/17iF5BbpLBcd3Ha-fie5XmguQPzD8lpGrEFD4IB72a4E/edit?slide=id.p#slide=id.p",
+      },
+    },
+    {
       title: "Plume",
       description:
         "HackMIT's all-in-one platform for managing hackathons; Includes application portal, check in process, project submission, judging platform, streamlined bulk admin tools, etc.; Led team of 15 to build the MVP (and beyond)",

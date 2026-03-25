@@ -30,13 +30,23 @@ const Home: React.FC = () => {
           }}
         />
       </div>
-      {/* <h1>Hi, I'm Annie!</h1> */}
       <p style={{ textAlign: "left", fontSize: "20px" }}>
-        Hi, I'm Annie&#8212;an MIT student studying Math (18) & Computer Science
-        (6-3).
+        Hi, I'm Annie&#8212;an MIT student studying Computer Science (6-3).
       </p>
       <p style={{ textAlign: "left", fontSize: "20px" }}>
-        On campus, I'm involved with the{" "}
+        I'm interested in building at the intersection of software and hardware,
+        especially embedded systems and human-computer interaction devices; most
+        recently, I joined Biomechatronics at MIT Media Lab researching
+        spider-web-like prosthetics and wearable body extensions that translate
+        movements into sound. Before that, I built a nonintrusive bruxism
+        prevention headband called Somniac.
+      </p>
+      <p style={{ textAlign: "left", fontSize: "20px" }}>
+        I'm most excited about the AI x robotics and HCI space, especially with
+        BCI applications to improve people's quality of life.
+      </p>
+      <p style={{ textAlign: "left", fontSize: "20px" }}>
+        On campus, I'm a retired DevOps Head of the{" "}
         <a
           href="https://hackmit.org/"
           target="_blank"
@@ -44,61 +54,16 @@ const Home: React.FC = () => {
         >
           HackMIT
         </a>{" "}
-        organizing team. As Head of DevOps, I led 14 engineers in building 5+
-        apps, the largest one being{" "}
-        <a
-          href="https://plume.hackmit.org"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: "#366f72" }}
-        >
-          Plume
-        </a>
-        . See the{" "}
+        organizing team. I led 15 engineers as tech lead to build and maintain 6
+        web applications to streamline hackathon organization. See the{" "}
         <a href="/projects" style={{ color: "#366f72" }}>
           Projects
         </a>{" "}
-        page for details. I'm also an active member of the{" "}
-        <a
-          href="https://poker.mit.edu/"
-          target="_blank"
-          style={{ color: "#366f72" }}
-        >
-          Poker Club
-        </a>
-        &#8212;we study theory and host weekly events to introduce people to
-        different variants.
-      </p>
-      <p style={{ textAlign: "left", fontSize: "20px" }}>
-        I love discovering new areas and exploring interests beyond software.
-        Recently, I've felt inspired to dive into the world of hardware&#8212;so
-        I'm excited to see where this new journey takes me.
-      </p>
-      <p style={{ textAlign: "left", fontSize: "20px" }}>
-        Before college, I grew up in the suburbs of Massachusetts, where I
-        studied math, captained{" "}
-        <a
-          href="https://sites.google.com/abschools.org/abscioly/home?authuser=0"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: "#366f72" }}
-        >
-          AB SciOly
-        </a>
-        , and helped organize{" "}
-        <a
-          href="https://abmathcompetitions.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: "#366f72" }}
-        >
-          ABMC
-        </a>
-        .
+        page for details.
       </p>
       <p style={{ textAlign: "left", fontSize: "20px" }}>
         In my free time, I'm probably at a local cafe adding to my Beli
-        collection or playing my favorite pieces on the piano.
+        collection or running along the Charles.
       </p>
       <p style={{ textAlign: "left", fontSize: "20px" }}>
         Please contact me at awang27 [at] mit [dot] edu if you would like to
