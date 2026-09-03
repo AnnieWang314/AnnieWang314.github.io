@@ -1,94 +1,95 @@
-import React from "react";
-import headshot from "./assets/headshot.jpg"; // Assuming headshot.jpg is in the same directory
-import { FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa"; // Importing icons
+import { Link } from "react-router-dom";
+import { FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";
+// 400px source for a 172px circle; the 3504px original was a 926KB download.
+import headshot from "./assets/headshot-400.jpg";
+
+const now: { label: string; body: React.ReactNode }[] = [
+  {
+    label: "Learning about",
+    body: "AI x robotics x HCI, and how to make cool stuff",
+  },
+  { label: "Otherwise", body: "at a cafe, or running along the Charles" },
+];
 
 const Home: React.FC = () => {
   return (
-    <div style={{ textAlign: "center" }}>
-      <div
-        style={{
-          width: "160px",
-          height: "160px",
-          overflow: "hidden",
-          borderRadius: "50%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          marginBottom: "20px", // Move the image down a little
-          float: "left", // Allow text to wrap around the image
-          marginRight: "30px", // Add space between the image and text
-        }}
-      >
+    <div>
+      <div className="hero">
+        <div>
+          <h1 className="lede">
+            hi,
+          </h1>
+          <div className="prose">
+            <p>
+              I'm Annie, a senior at MIT. I like embedded
+              systems and robotics.
+            </p>
+            <p>
+              Last summer I was at Modal, figuring out when containers
+              should spin up and when they should shut down. Before that I built a headband for teeth grinders. I'm also a retired
+              DevOps Head at{" "}
+              <a href="https://hackmit.org/" target="_blank" rel="noopener noreferrer">
+                HackMIT
+              </a>
+              , where I ran 15 engineers across five apps.
+            </p>
+            <p>
+              My journey from math to software to hardware land has not been linear. But it's been fun!
+            </p>
+          </div>
+        </div>
+
         <img
+          className="hero-photo"
           src={headshot}
-          alt="headshot"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            borderRadius: "50%",
-          }}
+          alt="Annie Wang"
+          width={172}
+          height={172}
+          decoding="async"
         />
       </div>
-      <p style={{ textAlign: "left", fontSize: "20px" }}>
-        Hi, I'm Annie&#8212;an MIT student studying Computer Science (6-3).
-      </p>
-      <p style={{ textAlign: "left", fontSize: "20px" }}>
-        I'm interested in building at the intersection of software and hardware,
-        especially embedded systems and human-computer interaction devices; most
-        recently, I joined Biomechatronics at MIT Media Lab researching
-        spider-web-like prosthetics and wearable body extensions that translate
-        movements into sound. Before that, I built a nonintrusive bruxism
-        prevention headband called Somniac.
-      </p>
-      <p style={{ textAlign: "left", fontSize: "20px" }}>
-        I'm most excited about the AI x robotics and HCI space, especially with
-        BCI applications to improve people's quality of life.
-      </p>
-      <p style={{ textAlign: "left", fontSize: "20px" }}>
-        On campus, I'm a retired DevOps Head of the{" "}
-        <a
-          href="https://hackmit.org/"
-          target="_blank"
-          style={{ color: "#366f72" }}
-        >
-          HackMIT
-        </a>{" "}
-        organizing team. I led 15 engineers as tech lead to build and maintain 6
-        web applications to streamline hackathon organization. See the{" "}
-        <a href="/projects" style={{ color: "#366f72" }}>
-          Projects
-        </a>{" "}
-        page for details.
-      </p>
-      <p style={{ textAlign: "left", fontSize: "20px" }}>
-        In my free time, I'm probably at a local cafe adding to my Beli
-        collection or running along the Charles.
-      </p>
-      <p style={{ textAlign: "left", fontSize: "20px" }}>
-        Please contact me at awang27 [at] mit [dot] edu if you would like to
-        chat!
-      </p>
-      <hr style={{ margin: "20px 0", border: "1px solid #ccc" }} />
-      <div style={{ marginTop: "20px" }}>
+
+      <section className="now" aria-labelledby="now-heading">
+        <p className="eyebrow" id="now-heading">
+          Currently
+        </p>
+        <ul className="now-list">
+          {now.map(({ label, body }) => (
+            <li key={label}>
+              <span className="now-label">{label}</span>
+              <span>{body}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <div className="prose">
+        <p>
+          Check out my <Link to="/work">work</Link> page! If any
+          of it sounds interesting, I'd love to hear from you — awang27 [at] mit
+          [dot] edu.
+        </p>
+      </div>
+
+      <div className="socials">
         <a
           href="https://github.com/AnnieWang314"
           target="_blank"
           rel="noopener noreferrer"
-          style={{ margin: "0 10px" }}
+          aria-label="GitHub"
         >
-          <FaGithub size={30} />
+          <FaGithub />
         </a>
         <a
           href="https://www.linkedin.com/in/annie-wang-ma"
           target="_blank"
           rel="noopener noreferrer"
-          style={{ margin: "0 10px" }}
+          aria-label="LinkedIn"
         >
-          <FaLinkedin size={30} />
+          <FaLinkedin />
         </a>
-        <a href="mailto:awang27@mit.edu" style={{ margin: "0 10px" }}>
-          <FaEnvelope size={30} />
+        <a href="mailto:awang27@mit.edu" aria-label="Email">
+          <FaEnvelope />
         </a>
       </div>
     </div>

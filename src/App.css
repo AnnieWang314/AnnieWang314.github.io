@@ -1,46 +1,111 @@
 #root {
-  margin: 4vh auto;
-  padding: 2rem 5%;
-  text-align: center;
-  width: 60%;
-  min-width: 360px;
+  /* Was `width: 60%; min-width: 360px; padding: 2rem 5%` on content-box, which
+     forced ~397px of layout into a 375px phone and clipped text off-screen. */
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2.25rem 1.5rem 5rem;
 }
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0.6em 1em;
+  border-radius: var(--radius);
+  z-index: 100;
+}
+
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+}
+
+/* ============ Nav ============ */
 
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1em;
-  /* background-color: white; */
+  gap: 1rem;
+  padding-bottom: 3rem;
   position: relative;
 }
 
-.navbar-brand {
-  font-weight: bold;
+.navbar-brand a {
+  /* Lowercase presentationally only — the DOM keeps "Annie Wang" so screen
+     readers and search results still get the name properly capitalised. */
+  text-transform: lowercase;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.2rem + 1.1vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.navbar-brand a:hover {
+  color: var(--accent);
+  text-decoration: none;
 }
 
 .hamburger {
   display: none;
-  font-size: 24px;
-  color: black;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--ink);
   background: none;
   border: none;
+  padding: 0.35em 0.45em;
   cursor: pointer;
   transition: transform 0.3s ease;
 }
 
-/* Rotates the icon */
 .hamburger.rotated {
   transform: rotate(90deg);
 }
 
 .navbar-links {
   display: flex;
-  gap: 1em;
-  font-size: 24px;
+  gap: 1.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
 }
 
-@media (max-width: 768px) {
+.navbar-links a {
+  color: var(--muted);
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.navbar-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 1.5px;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+.navbar-links a:hover {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.navbar-links a:hover::after,
+.navbar-links a[aria-current="page"]::after {
+  width: 100%;
+}
+
+.navbar-links a[aria-current="page"] {
+  color: var(--ink);
+}
+
+@media (max-width: 700px) {
   .hamburger {
     display: block;
   }
@@ -48,86 +113,580 @@
   .navbar-links {
     display: none;
     flex-direction: column;
+    align-items: flex-start;
     position: absolute;
-    top: 4em;
-    right: 1.5em;
-    background: white;
-    width: 60px;
-    max-width: 80%;
-    padding: 1em;
-    gap: 1em;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    top: 3em;
+    right: 0;
+    /* Was a fixed 60px wide, which cropped the labels. */
+    min-width: 9rem;
+    background: var(--surface);
+    padding: 0.9em 1.1em;
+    gap: 0.9em;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 6px 24px rgba(var(--shadow), 0.14);
+    z-index: 20;
   }
 
   .navbar-links.open {
     display: flex;
   }
-
-  .navbar-links a {
-    padding: 0.5em 0;
-  }
 }
 
-.projects-container {
-  margin-top: 20px; /* Reduced top margin */
+/* ============ Shared bits ============ */
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
-.projects-grid {
+.lede {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 1.2rem + 2.4vw, 2.9rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  margin: 0.5rem 0 1.25rem;
+}
+
+.lede em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.prose {
+  max-width: var(--measure);
+}
+
+.prose p {
+  margin: 0 0 1.05em;
+  color: var(--ink);
+}
+
+.prose p:last-child {
+  margin-bottom: 0;
+}
+
+/* ============ Home ============ */
+
+.hero {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Set to a maximum of 2 columns */
-  gap: 20px;
-  padding: 0 10px; /* Added padding to prevent overlap with container edges */
+  grid-template-columns: 1fr 172px;
+  gap: 2.5rem;
+  align-items: start;
+  margin-bottom: 3rem;
 }
 
-@media (max-width: 768px) {
-  .projects-grid {
-    grid-template-columns: 1fr; /* Change to 1 column on smaller screens */
+.hero-photo {
+  width: 172px;
+  height: 172px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 30px rgba(var(--shadow), 0.16);
+}
+
+@media (max-width: 640px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .hero-photo {
+    width: 132px;
+    height: 132px;
+    order: -1;
   }
 }
 
-.project-card {
-  border: 1px solid #ccc;
-  padding: 20px;
-  border-radius: 8px;
-  background-color: #def0ee;
-  transition: box-shadow 0.3s;
-  text-align: left; /* Added to align text to the left */
-  height: auto; /* Changed height to auto to allow cards to expand as needed */
-  box-sizing: border-box; /* Ensures padding and border are included in total width/height */
+/* "Currently" strip */
+
+.now {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 1.4rem 0;
+  margin: 2.5rem 0;
 }
 
-.project-card:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+.now-list {
+  list-style: none;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
 }
 
-.tech-stack {
-  margin-top: 10px;
+.now-list li {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.now-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--warm);
+}
+
+@media (max-width: 560px) {
+  .now-list li {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+}
+
+/* ============ Socials ============ */
+
+.socials {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  gap: 1.15rem;
+  align-items: center;
+  margin-top: 2rem;
 }
 
-.tech-tag {
-  margin-right: 2px;
-  padding: 5px;
-  background-color: #bcd2cf;
-  border-radius: 4px;
+.socials a {
+  display: inline-flex;
+  color: var(--muted);
+  font-size: 1.45rem;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.project-links {
-  margin-top: 10px;
+.socials a:hover {
+  color: var(--accent);
+  transform: translateY(-3px);
 }
 
-.project-links a {
-  margin-right: 10px;
-  color: #366f72;
+/* ============ Work gallery ============ */
+
+.page-header {
+  margin-bottom: 3rem;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3rem 2.5rem;
+  margin-bottom: 4rem;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  color: inherit;
+}
+
+.tile:hover {
   text-decoration: none;
 }
 
-.project-links a:hover {
-  text-decoration: underline;
+.tile-media {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.tile-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.tile:hover .tile-media img {
+  transform: scale(1.04);
+}
+
+/* Renders with their own transparency shouldn't be cropped. */
+.tile-media--contain {
+  background: var(--bg-tint);
+}
+
+.tile-media--contain img {
+  object-fit: contain;
+  padding: 1.1rem;
+}
+
+.tile:hover .tile-media--contain img {
+  transform: scale(1.03);
+}
+
+/* No photo yet: the sentence becomes the tile. */
+.tile-media--words {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  background: var(--accent-soft);
+  border-color: transparent;
+}
+
+.tile-media--words span {
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.3rem);
+  line-height: 1.25;
+  color: var(--ink);
+}
+
+.tile-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.tile-name {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.tile:hover .tile-name {
+  color: var(--accent);
+}
+
+.tile-line {
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.tile--flat {
+  cursor: default;
+}
+
+@media (max-width: 560px) {
+  .gallery {
+    grid-template-columns: 1fr;
+    gap: 2.25rem;
+  }
+}
+
+/* ============ Project page ============ */
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 2rem;
+}
+
+.back-link:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.project-header {
+  margin-bottom: 2rem;
+}
+
+.project-blurb {
+  font-size: clamp(1.05rem, 1rem + 0.35vw, 1.25rem);
+  color: var(--muted);
+  max-width: var(--measure);
+  margin: 0.25rem 0 0;
+}
+
+.project-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-top: 1.4rem;
+}
+
+.project-actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  padding: 0.55em 1.05em;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.project-actions a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* Facts strip */
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.75rem 2.5rem;
+  margin: 0 0 2.5rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.fact dt {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--warm);
+  margin-bottom: 0.2rem;
+}
+
+.fact dd {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Figures */
+
+.project-figure {
+  margin: 0 0 2.5rem;
+}
+
+.project-figure img {
+  display: block;
+  /* max-width + auto height so tall portrait renders cap on height instead of
+     running off the bottom of the screen; landscape shots still fill the width. */
+  max-width: 100%;
+  max-height: 78vh;
+  width: auto;
+  height: auto;
+  margin: 0 auto;
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 40px rgba(var(--shadow), 0.14);
+}
+
+/* Cutouts and renders with their own transparency: no card around them. */
+.project-figure--plain img {
+  border: 0;
+  box-shadow: none;
+}
+
+.project-figure--plain figcaption {
+  text-align: center;
+}
+
+.project-figure figcaption {
+  margin-top: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* Break the lead image out past the text column on wide screens. */
+@media (min-width: 900px) {
+  .project-figure--lead {
+    width: calc(100% + 4rem);
+    margin-left: -2rem;
+  }
+}
+
+.project-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin: 2.5rem 0 0;
+}
+
+.project-gallery .project-figure {
+  margin-bottom: 0;
+}
+
+/* Body copy */
+
+.project-body {
+  max-width: var(--measure);
+}
+
+.project-body section {
+  margin-bottom: 2.25rem;
+}
+
+.project-body h2 {
+  font-size: 1.35rem;
+  margin-bottom: 0.6rem;
+}
+
+.project-body p {
+  margin: 0 0 1.05em;
+}
+
+.project-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* Prev / next */
+
+.project-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: 4rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.project-nav a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--ink);
+  max-width: 45%;
+}
+
+.project-nav a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.project-nav-next {
+  text-align: right;
+  margin-left: auto;
+}
+
+.project-figure--mark {
+  text-align: center;
+}
+
+.project-figure--mark img {
+  max-width: 190px;
+  max-height: none;
+}
+
+/* ============ Autoscaling artwork ============ */
+
+.autoscale {
+  --modal-green: #7fee64;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.1rem;
+  padding: 1.75rem;
+  background: #0c1210;
+  overflow: hidden;
+}
+
+.autoscale-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+}
+
+.autoscale-cell {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: var(--modal-green);
+  opacity: 0.22;
+  transform: scale(0.86);
+  animation: container-life 6s ease-in-out infinite;
+}
+
+@keyframes container-life {
+  0%,
+  6% {
+    opacity: 0.22;
+    transform: scale(0.86);
+  }
+  18%,
+  56% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  72%,
+  100% {
+    opacity: 0.22;
+    transform: scale(0.86);
+  }
+}
+
+/* The demand the containers are chasing. */
+.autoscale-load {
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    var(--modal-green) 0%,
+    var(--modal-green) 100%
+  );
+  transform-origin: left center;
+  animation: demand 6s ease-in-out infinite;
+}
+
+@keyframes demand {
+  0%,
+  4% {
+    transform: scaleX(0.08);
+    opacity: 0.5;
+  }
+  20%,
+  50% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  70%,
+  100% {
+    transform: scaleX(0.08);
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .autoscale-cell,
+  .autoscale-load {
+    animation: none;
+  }
+
+  .autoscale-cell {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+
+  .autoscale-load {
+    transform: scaleX(1);
+  }
+}
+
+.tile-media--art {
+  border-color: transparent;
+  padding: 0;
+}
+
+/* ============ Sonic Body artwork ============ */
+
+.bodyart {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: var(--bg-tint);
+}
+
+.bodyart-strands path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linecap: round;
+}
+
+.bodyart-nodes circle {
+  fill: var(--accent);
+  opacity: 0.45;
 }
