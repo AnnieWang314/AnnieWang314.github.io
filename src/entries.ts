@@ -11,7 +11,7 @@ export interface Entry {
    * Gallery tile overrides. `tagline` is required for entries with no page;
    * `image` lets an entry frame itself differently in the grid than on its page.
    */
-  tile?: { tagline?: string; image?: string; art?: "web" };
+  tile?: { tagline?: string; image?: string; art?: "web"; contain?: boolean };
   /** Company for roles; course or event context for projects. */
   org?: string;
   dates: string;
@@ -36,7 +36,7 @@ export const entries: Entry[] = [
     slug: "modal",
     short: "Autoscaling at Modal",
     org: "Modal Labs",
-    dates: "Summer 2026",
+    dates: "2026 Aug",
     location: "San Francisco",
     points: [
       "Worked across the worker, input plane, and control plane on how containers schedule work and decide to scale.",
@@ -47,11 +47,12 @@ export const entries: Entry[] = [
     technologies: ["Go", "Python", "Rust", "Protobuf", "Redis", "ClickHouse"],
   },
   {
-    kind: "project",
-    title: "Thermominator",
+    kind: "role",
+    title: "Firmware Lead",
     slug: "thermominator",
+    short: "Thermominator",
     org: "6.900",
-    dates: "2026 Feb — May",
+    dates: "2026 May",
     points: [
       "A wearable heat monitor, built by eight people across firmware, power, sensors, server, and industrial design. I led firmware.",
       "A C++ state machine juggling modem, light, and deep sleep to keep an ESP32-C3 alive on a small battery.",
@@ -97,9 +98,10 @@ export const entries: Entry[] = [
     title: "Somniac",
     slug: "somniac",
     // The page shows the band upright; the grid wants a landscape crop.
-    tile: { image: "somniac-tile.jpg" },
-    org: "YC S25",
-    dates: "2025",
+    // The whole band, shown end to end rather than cropped into the box.
+    tile: { image: "somniac-tile.jpg", contain: true },
+    org: "YC Summer Fellow",
+    dates: "2025 Aug",
     points: [
       "A headband that catches you grinding your teeth in your sleep.",
       "Custom circuit, firmware, BLE, an EMG classifier, and the iOS app it reports to.",
@@ -134,7 +136,7 @@ export const entries: Entry[] = [
     title: "Wodou",
     slug: "wodou",
     org: "HackMIT admission puzzle",
-    dates: "2024",
+    dates: "2024 Jun",
     points: [
       "Wordle, but in Chinese calligraphy — and also a cryptography puzzle.",
       "The puzzle prospective HackMIT organizers had to solve to get in.",

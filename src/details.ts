@@ -1,14 +1,28 @@
 /**
- * Project pages are off for now — the gallery still uses everything in here for
- * images and taglines, it just doesn't link through. Flip this back to true to
- * turn the pages (and the tile links) back on.
+ * Pages that are live. The gallery uses everything in this file for images and
+ * taglines regardless; a slug listed here also gets a page and a clickable tile.
+ * Add slugs one at a time as their writing is ready.
  */
-export const PROJECT_PAGES_ENABLED = false;
+export const ENABLED_PAGES: readonly string[] = [
+  "modal",
+  "thermominator",
+  "somniac",
+  "hackmit",
+  "wodou",
+];
+
+export const pageIsLive = (slug?: string) =>
+  Boolean(slug && ENABLED_PAGES.includes(slug));
 
 export interface DetailSection {
   heading?: string;
   /** Each string is a paragraph. */
   body: string[];
+  /**
+   * Filename of one of this page's `images`, shown right after this section
+   * instead of being left in the pile at the bottom.
+   */
+  image?: string;
 }
 
 export interface ProjectDetail {
@@ -18,8 +32,6 @@ export interface ProjectDetail {
   tagline: string;
   /** Generated artwork to use instead of a photograph. */
   art?: "autoscale";
-  /** Short label/value pairs shown as a strip near the top. */
-  facts?: { label: string; value: string }[];
   sections: DetailSection[];
   /**
    * Filenames inside src/assets/projects/. Any that don't exist yet are simply
@@ -33,6 +45,8 @@ export interface ProjectDetail {
     transparent?: boolean;
     /** A logo or brand mark: small and centred rather than full width. */
     mark?: boolean;
+    /** Render at a reduced width — for photos that don't need the full column. */
+    small?: boolean;
   }[];
 }
 
@@ -41,40 +55,20 @@ export const details: Record<string, ProjectDetail> = {
     art: "autoscale",
     tagline: "When should a container exist, and when should it stop?",
     blurb:
-      "Three months on a single question: when should a container exist, and when should it stop?",
-    facts: [
-      { label: "Where", value: "Modal Labs" },
-      { label: "When", value: "Summer 2026" },
-      { label: "Stack", value: "Go · Python · Rust" },
-    ],
+      "When should a container exist, and when should it stop?",
     sections: [
       {
         body: [
-          "Modal runs your code in containers, on machines you never have to think about. Somebody calls a function, and somewhere a container has to be alive and ready to take that call. Deciding how many containers should exist, right now, is the autoscaler's job — and it's a job with no free mistakes. Too few containers and work sits in a queue. Too many and you're paying for machines doing nothing.",
-          "I spent the summer across three parts of that system: the Rust worker that runs containers, the Go input plane that routes work to them, and the Python control plane that decides how many there should be.",
-        ],
-      },
-      {
-        heading: "A container that guesses wrong",
-        body: [
-          "Before a worker finishes the input it's running, it decides whether to reach for another one. To decide well it needs a sense of how long inputs take. The existing logic formed that sense from the very first call it saw.",
-          "The first call is the worst possible sample. It's a warm-up — imports, model loads, cold caches — and it's rarely representative of anything. But the failure I found was the opposite of what you'd expect: when that first call happened to be fast, the container concluded that all its work would be fast, and kept claiming more. Slow inputs then piled onto that one container while other containers sat with nothing to do.",
-          "I replaced the single sample with a rolling history of recent call times, ignoring the first one. On a benchmark mixing fast and slow inputs, queue time dropped by roughly half. The behavior worth preserving — genuinely fast inputs continuing to run efficiently on one container — stayed intact.",
+          "Modal runs your code in containers, on machines you never have to think about. The autoscaler determines how many of those containers exist for your function.",
+          "I spent the summer working on this. Besides searching for the best formula or scaling algorithm, the hardest part was testing these potential changes.",
         ],
       },
       {
         heading: "You can't A/B test an autoscaler",
         body: [
-          "The obvious way to evaluate an autoscaling policy is to ship it and watch. That's slow, expensive, and not even a fair comparison: traffic is never the same twice, so two policies never face the same test.",
-          "So I built a simulator instead — a discrete-event model with one controller loop and one coroutine per simulated container, able to replay real production traffic or generate synthetic patterns: steady load, ramps, spikes, gaps and resumptions, redeploys mid-flight.",
-          "That turned a months-long question into an afternoon. I ran policies across more than a hundred scenarios and compared them on latency, cost, and containers that were created but never given work. The useful output wasn't a winner. It was a tradeoff curve — and the finding that several intuitive policies were quietly amplifying noise rather than predicting demand. A good chunk of the summer's value was deciding what not to ship.",
-        ],
-      },
-      {
-        heading: "Why did this container die?",
-        body: [
-          "A container can stop for a lot of reasons. The autoscaler drained it. A redeploy replaced it. It was preempted, or cancelled, or timed out, or ran out of memory, or crashed. From the outside all of these looked roughly the same, which made them hard to explain to users and hard to debug internally.",
-          "I catalogued the start and stop paths and designed lifecycle records so that each one carries its reason, along with the autoscaler state that produced the decision. The point is that months later somebody can ask why a container disappeared and get an actual answer instead of an inference.",
+          "The naive way is to ship a change and watch. It's slow, expensive, and not fair: traffic does not repeat exactly in production, so two versions never face the same test.",
+          "So I built a simulator. It works as a discrete event model with one controller loop and one coroutine per simulated container. It can replay real production traffic, or generate synthetic patterns like spikes, waves, or redeploys. This means hours of traffic play in a couple seconds.",
+          "With this, I could run different approaches against identical traffic across more than a hundred scenarios, and compare them on latency, cost, and wasted capacity. There was no clear winner but useful tradeoff curves instead.",
         ],
       },
     ],
@@ -86,52 +80,44 @@ export const details: Record<string, ProjectDetail> = {
   somniac: {
     tagline: "A headband that catches you grinding your teeth.",
     blurb:
-      "A headband that catches you grinding your teeth — for a problem nobody can yet explain.",
-    facts: [
-      { label: "Where", value: "Y Combinator Summer Fellowship" },
-      { label: "When", value: "2025" },
-      { label: "Cohort", value: "29 fellows from 10,000+" },
-      { label: "Built", value: "Circuit · Firmware · Model · iOS" },
-    ],
+      "A headband that catches you grinding your teeth, useful in sleep.",
     sections: [
       {
         body: [
-          "About a third of people grind their teeth, mostly at night and mostly without knowing it. In a 2021 survey by the American Dental Association, 70% of dentists reported seeing more of it. It starts as the occasional toothache and ends at chipped teeth, chronic migraines, and in the worst cases jaw fractures.",
-          "Nobody knows what causes it. Stress, genetics, facial structure — the honest answer is that it's unsettled.",
+          "About 1/3 of people grind their teeth at night, mostly without knowing. The result is chipped teeth, migraines, and sometimes jaw fractures. People can only guess what causes it (stress, genetics, facial structure), but there's no real explanation.",
         ],
       },
       {
         heading: "The gap",
         body: [
-          "A dentist I interviewed put the problem plainly: there had been a lot of times he thought a patient was clenching, but couldn't be sure. Nothing tracks grinding, or tracks whatever might be causing it, so by the time a dentist can see the evidence it's already in the enamel.",
-          "The existing options sit at the wrong end of the tradeoff. A night guard is noninvasive but completely passive — it protects the teeth and does nothing about the grinding. Surgery is proactive and invasive. We went after the corner nobody was in: proactive and noninvasive.",
+          "One dentist I interviewed said he often thought a patient was clenching, but he wasn't be sure. Nothing tracks it, so by the time it's visible, this means the damage is already severe.",
         ],
       },
       {
         heading: "Reading the muscle",
+        image: "somniac-emg.jpg",
         body: [
-          "Clenching is a masseter contraction, and a contracting muscle leaks electrical activity you can pick up on the surface of the skin. Surface EMG is small, noisy, and easily swamped by an ordinary head moving on a pillow, so most of the work is deciding what in the signal is actually real.",
-          "Across 8,751 samples the classifier reached 88% accuracy on a single user, and 80% overall once you account for the variation between people and between recording sessions. That gap is the real research problem, and it's why the device calibrates to each user instead of shipping one model for everybody.",
+          "Clenching is a masseter (around temples) contraction. Muscle contractions leak electrical activity we can read off the skin using surface EMG.",
+          "Across 8,751 samples the classifier hit 88% on a single user and 80% overall, once you account for the variation between people and between sessions. That gap is why the device calibrates to each user instead of shipping one model for everybody.",
         ],
       },
       {
         heading: "Making it wearable",
         body: [
-          "Detection on a bench isn't a product. I designed the custom circuit through two revisions, along with the firmware, the BLE integration, and a power budget that has to survive an entire night — a wearable that dies at 3am has measured nothing.",
-          "The headband pairs with an iOS app I built, which logs each event and its intensity and also pulls in room temperature, humidity, and noise, on the theory that whatever sets off a night of grinding might show up in the environment around it.",
+          "I designed several versions of a custom circuit through two revisions, plus the firmware, BLE integration, and an iOS app to log clenching events and environment changes.",
         ],
       },
       {
-        heading: "What works, and what is still ahead",
+        heading: "What's next",
         body: [
-          "Detection, the custom circuit, and the app all work. The piece still ahead is intervention: using electrical muscle stimulation to interrupt a clench gently enough that the person stays asleep. That's the entire point of the device, and it's the part that isn't built yet.",
-          "Somniac was built over the Y Combinator Summer Fellowship, as one of 29 fellows selected from more than 10,000 applicants.",
+          "Detection, the circuit, and the app all work. What I didn't get to is comfort and intervention beyond. Maybe we could use muscle stimulation to interrupt a clench gently enough that nobody wakes up.",
         ],
       },
     ],
     images: [
       {
         file: "somniac-headband.jpg",
+        small: true,
         alt: "The inside of the Somniac headband: three conductive fabric electrodes stitched into a maroon band, each with a wire running out of it",
         caption:
           "The inside of the band. Three fabric electrodes, sitting over the muscle that does the clenching.",
@@ -140,66 +126,47 @@ export const details: Record<string, ProjectDetail> = {
         file: "somniac-emg.jpg",
         alt: "Scatter plot of surface EMG values over time, with clenching samples in red and non-clenching samples in blue forming clearly separated bands",
         caption:
-          "Surface EMG, clenching in red against everything else in blue. Separable — but not equally separable for every person.",
-      },
-      {
-        file: "somniac-app.jpg",
-        alt: "The Somniac iOS app showing a grinding history dashboard with total events, duration, average intensity and a per-event intensity timeline",
-        caption: "The app: what a night of grinding looks like the morning after.",
+          "Surface EMG, clenching in red against everything else in blue.",
       },
     ],
   },
 
   hackmit: {
-    tagline: "Two years, fifteen engineers, five apps, a thousand hackers.",
+    tagline: "Fifteen engineers, five apps, and thousands of hackers.",
     blurb:
-      "Running the software behind a hackathon — and the apps it turned out to need.",
-    facts: [
-      { label: "Where", value: "HackMIT & Blueprint" },
-      { label: "When", value: "2023 Oct — 2025 Mar" },
-      { label: "Team", value: "15 engineers" },
-      { label: "Scale", value: "1000+ participants" },
-    ],
+      "Running the software behind a hackathon.",
     sections: [
       {
         body: [
-          "HackMIT is a thousand-person hackathon; Blueprint is its sibling for high schoolers. Both run on software that somebody has to build, and for two years that was my team — fifteen engineers, most of them students picking up the stack as they went, on a deadline that doesn't move because the event is on a specific weekend.",
-          "Five apps, deployed to EC2 behind Nginx and Cloudflare. Three of them are worth describing here; the organizer admission puzzle gets its own page.",
+          "HackMIT hosts 1000+ undergraduate hackers; Blueprint is its sibling for high schoolers. I led the dev team of 15 in building five apps to make this possible.",
         ],
       },
       {
-        heading: "Plume — the platform",
+        heading: "Plume, the platform",
         body: [
-          "Running a hackathon for a thousand people involves a surprising number of separate softwares: something to take applications, something to check people in, something to collect projects, something to judge them, and a pile of admin tooling to fix all the things that go wrong at 2am. HackMIT had been doing this across several disconnected tools. Plume is the attempt to make it one thing.",
-          "I built the judging and ranking system, which is the part with actual teeth. Judges see a small number of projects each, no judge sees everything, and the scores have to combine into a ranking that's defensible when a team asks why they didn't win.",
+          "Before I joined HackMIT, there were several disconnected tools: something to take hacker applications, something to check people in, something to collect projects, something to judge them, etc. Plume is the attempt to make it one thing. Visit [plume.hackmit.org](https://plume.hackmit.org) to see it today.",
+     
         ],
       },
       {
-        heading: "Pigeon — the inbox",
+        heading: "Pigeon, the inbox",
         body: [
-          "A RAG email assistant that drafts replies out of the inbox's own history, so the same question asked three hundred times doesn't get answered three hundred times by hand. I oversaw its Chrome extension going into Gmail and Outlook, and added authentication and document imports.",
-        ],
-      },
-      {
-        heading: "Splash — the front door",
-        body: [
-          "The landing page is the first and often only thing someone sees before deciding whether the event is for them. For a lot of Blueprint's audience it's also their first hackathon of any kind, so the page is doing persuasion, not just information.",
-          "Rather than a hero image with a nav bar on top, the 2025 site is a single isometric room rendered in Three.js: a bakery, with the dates chalked onto the blackboard, the navigation propped up on an easel by the door, and a fox working the counter. The information lives in the room. It's also a lot of bytes to put in front of someone on a school laptop, which is the tension the whole build runs on.",
+          "A RAG email assistant that drafts replies out of the inbox's history. I oversaw its Chrome extension going into Gmail and Outlook.",
         ],
       },
       {
         heading: "What it taught me",
         body: [
-          "Mostly that leading fifteen people to a fixed deadline is an exercise in deciding what not to build. The MVP shipped because we were ruthless about everything that wasn't in it.",
+          "How to motivate people, how to pick what to not build, how to review code, how to grow others and myself.",
         ],
       },
     ],
     images: [
       {
         file: "splash-blueprint-2025.jpg",
-        alt: "The Blueprint 2025 landing page: an isometric 3D bakery with the event dates on a chalkboard",
+        alt: "Blueprint Splash",
         caption:
-          "Blueprint 2025. The dates are chalked on the board and the nav sits on the easel.",
+          "Blueprint 2025 landing page made with Three.js.",
       },
       { file: "plume-dashboard.png", alt: "Plume admin dashboard" },
       { file: "plume-judging.png", alt: "Plume judging interface" },
@@ -207,32 +174,26 @@ export const details: Record<string, ProjectDetail> = {
   },
 
   thermominator: {
-    tagline: "Keeping a wearable alive on a very small battery.",
+    tagline: "Keeping a wearable alive on a tiny battery.",
     blurb:
-      "A wearable heat monitor, and the firmware that keeps it alive on a very small battery.",
-    facts: [
-      { label: "Course", value: "6.900 — Engineering for Impact" },
-      { label: "When", value: "2026 Feb — May 2026" },
-      { label: "Team", value: "8 people, 5 subteams" },
-      { label: "My role", value: "Firmware lead" },
-    ],
+      "A wearable heat monitor.",
     sections: [
       {
         body: [
-          "Thermominator is a personal heat monitor: a wearable that tracks heat exposure and warns the person wearing it before they're in trouble. A team of eight built it across firmware, power, sensors, server, and industrial design. I led firmware.",
+          "Thermominator is a personal heat monitor. It's a wearable keychain-like device that tracks heat exposure. My team of 8 built this for MIT Office of Sustainability as part of our 6.900 project. I led firmware development.",
         ],
       },
       {
         heading: "Sleep is the whole problem",
         body: [
-          "A wearable's real constraint is the battery, and on an ESP32-C3 the difference between a device that lasts hours and one that lasts days is entirely about how aggressively it sleeps. But sleep is in tension with everything else: a sleeping radio isn't reporting, a sleeping sensor isn't sampling.",
-          "I wrote the firmware as a C++ state machine that moved deliberately between modem sleep, light sleep, and deep sleep, so the device was only ever as awake as the moment required.",
+          "We were building a wearable greatly constrained by its battery. On an ESP32-C3, the difference between a device that lasts hours and one that lasts days is mainly about how aggressively it sleeps.",
+          "I wrote the firmware as a C++ state machine between modem sleep, light sleep, and deep sleep, so that the device would sleep as much as possible without trading off too much functionality.",
         ],
       },
       {
         heading: "The integration surface",
         body: [
-          "Firmware is where every other subteam's work has to meet. I integrated WiFi communication, the sensor stack, the LCD display, battery management, and the backend server connection — which in practice meant being the person who found out that two subsystems disagreed about timing.",
+          "Firmware is where every other subteam's work has to meet: WiFi communication, the sensor stack, LCD display, and our backend server connection.",
         ],
       },
 
@@ -240,9 +201,9 @@ export const details: Record<string, ProjectDetail> = {
     images: [
       {
         file: "thermominator-device.png",
-        alt: "CAD render of the Thermominator: an oval enclosure with a lanyard loop, opened to show the PCB, LCD, two buttons, USB-C, buzzer, and battery connector",
+        alt: "CAD render of the Thermominator",
         caption:
-          "The enclosure with its lid off — LCD, two buttons, buzzer, USB-C, and the battery that all the sleep logic exists to protect.",
+          "The enclosure with its lid off. Includes LCD display, buttons, USB-C charging, battery.",
         transparent: true,
       },
       { file: "thermominator-team.jpg", alt: "The 6.900 team" },
@@ -253,12 +214,6 @@ export const details: Record<string, ProjectDetail> = {
     tagline: "Live video and audio between two FPGAs, over eight pins.",
     blurb:
       "Two FPGAs, eight pins between them, and a live video link built out of nothing but RTL.",
-    facts: [
-      { label: "Course", value: "6.205 — Digital Systems" },
-      { label: "When", value: "2025 Oct — Dec" },
-      { label: "With", value: "Sanjith Udupa" },
-      { label: "Stack", value: "SystemVerilog · cocotb · Vivado" },
-    ],
     sections: [
       {
         body: [
@@ -326,31 +281,21 @@ export const details: Record<string, ProjectDetail> = {
     tagline: "Wordle-inspired Chinese calligraphy cipher puzzle.",
     blurb:
       "Wordle-inspired Chinese calligraphy cipher puzzle.",
-    facts: [
-      { label: "Where", value: "HackMIT" },
-      { label: "When", value: "2024" },
-    ],
     sections: [
       {
         body: [
-          "Every year HackMIT admits new organizers, and every year the application involves a puzzle. Wodou was mine.",
-          "On the surface it's Wordle, except you're guessing Chinese characters rather than English words — which changes the game, because a character carries structure that a five-letter word doesn't. Strokes, radicals, and shape all become information you can reason from.",
-          "Underneath, it's a cryptography puzzle. Solving the game is the beginning rather than the end, and the algorithmic layer is what actually separated applicants.",
-        ],
-      },
-      {
-        heading: "Why a puzzle at all",
-        body: [
-          "A puzzle is a better filter than an essay. It selects for people who will sit with something confusing for an evening and not put it down — which is most of what organizing turns out to require.",
+          "Every year the HackMIT organizing team writes puzzles. Top X puzzle solvers are automatically admitted to the undergraduate hackathon. I made Wodou for HackMIT 2024.",
+          "On the surface it's Wordle, except the board is prefilled with Chinese characters... and you're guessing 6 characters.",
+          "Underneath, it's a cryptography puzzle. Good luck!",
         ],
       },
     ],
     images: [
       {
         file: "wodou-game.png",
-        alt: "The Wodou board: a five-by-six grid of Chinese characters with an empty input row beneath it",
+        alt: "The Wodou board",
         caption:
-          "Five characters across, six guesses down — the same shape as Wordle, with far more to reason from in each tile.",
+          "What it looks like.",
       },
     ],
   },

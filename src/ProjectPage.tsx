@@ -1,13 +1,35 @@
 import { Link, Navigate, useParams } from "react-router-dom";
 import { FaArrowLeft, FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 import { entries, label, sublabel } from "./entries";
-import { details, PROJECT_PAGES_ENABLED } from "./details";
+import { details, pageIsLive } from "./details";
 import { projectImage } from "./projectImages";
+
+
+/**
+ * Body text is plain, except for markdown-style [label](url) links. Parsed into
+ * real elements rather than injected as HTML, so a stray angle bracket in the
+ * writing can never become markup.
+ */
+function withLinks(text: string) {
+  const parts: React.ReactNode[] = [];
+  const pattern = /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = pattern.exec(text)) !== null) {
+    if (m.index > last) parts.push(text.slice(last, m.index));
+    parts.push(
+      <a key={m.index} href={m[2]} target="_blank" rel="noopener noreferrer">
+        {m[1]}
+      </a>
+    );
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return parts;
+}
 
 const ProjectPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-
-  if (!PROJECT_PAGES_ENABLED) return <Navigate to="/work" replace />;
 
   // Pages that were folded into another one; keep their URLs working.
   const merged: Record<string, string> = {
@@ -21,13 +43,19 @@ const ProjectPage: React.FC = () => {
   const entry = index === -1 ? undefined : entries[index];
   const detail = slug ? details[slug] : undefined;
 
-  if (!entry || !detail) return <Navigate to="/work" replace />;
+  if (!entry || !detail || !pageIsLive(slug)) return <Navigate to="/work" replace />;
 
   // Neighbouring pages, skipping entries that don't have one.
-  const withPages = entries.filter((e) => e.slug && details[e.slug]);
+  // Only walk between pages that are actually live, or the arrows point at
+  // slugs that just redirect back to the index.
+  const withPages = entries.filter((e) => pageIsLive(e.slug));
   const pos = withPages.findIndex((e) => e.slug === slug);
   const prev = withPages[pos - 1];
   const next = withPages[pos + 1];
+
+  const claimed = new Set(
+    detail.sections.map((sec) => sec.image).filter(Boolean) as string[]
+  );
 
   const images = (detail.images ?? [])
     .map((img) => ({ ...img, src: projectImage(img.file) }))
@@ -66,22 +94,12 @@ const ProjectPage: React.FC = () => {
         )}
       </header>
 
-      {detail.facts && (
-        <dl className="facts">
-          {detail.facts.map(({ label, value }) => (
-            <div key={label} className="fact">
-              <dt>{label}</dt>
-              <dd>{value}</dd>
-            </div>
-          ))}
-        </dl>
-      )}
-
       {images[0] && (
         <figure
           className={[
             "project-figure",
             images[0].mark ? "project-figure--mark" : "project-figure--lead",
+            images[0].small ? "project-figure--small" : "",
             images[0].transparent || images[0].mark ? "project-figure--plain" : "",
           ]
             .filter(Boolean)
@@ -97,15 +115,26 @@ const ProjectPage: React.FC = () => {
           <section key={section.heading ?? i}>
             {section.heading && <h2>{section.heading}</h2>}
             {section.body.map((para) => (
-              <p key={para}>{para}</p>
+              <p key={para}>{withLinks(para)}</p>
             ))}
+
+            {(() => {
+              const fig = images.find((img) => img.file === section.image);
+              if (!fig) return null;
+              return (
+                <figure className="project-figure project-figure--inline">
+                  <img src={fig.src} alt={fig.alt} loading="lazy" />
+                  {fig.caption && <figcaption>{fig.caption}</figcaption>}
+                </figure>
+              );
+            })()}
           </section>
         ))}
       </div>
 
-      {images.length > 1 && (
+      {images.slice(1).some((img) => !claimed.has(img.file)) && (
         <div className="project-gallery">
-          {images.slice(1).map((img) => (
+          {images.slice(1).filter((img) => !claimed.has(img.file)).map((img) => (
             <figure
               key={img.file}
               className={`project-figure${

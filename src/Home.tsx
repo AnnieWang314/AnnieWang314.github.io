@@ -17,7 +17,7 @@ const Home: React.FC = () => {
       <div className="hero">
         <div>
           <h1 className="lede">
-            hi,
+            hi
           </h1>
           <div className="prose">
             <p>
@@ -32,9 +32,6 @@ const Home: React.FC = () => {
                 HackMIT
               </a>
               , where I ran 15 engineers across five apps.
-            </p>
-            <p>
-              My journey from math to software to hardware land has not been linear. But it's been fun!
             </p>
           </div>
         </div>
@@ -65,7 +62,7 @@ const Home: React.FC = () => {
 
       <div className="prose">
         <p>
-          Check out my <Link to="/work">work</Link> page! If any
+          Check out my <Link to="/work">work</Link> page to see how I've gone from math to software to hardware! If any
           of it sounds interesting, I'd love to hear from you — awang27 [at] mit
           [dot] edu.
         </p>

@@ -424,32 +424,6 @@
   text-decoration: none;
 }
 
-/* Facts strip */
-
-.facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.75rem 2.5rem;
-  margin: 0 0 2.5rem;
-  padding: 1.25rem 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-
-.fact dt {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--warm);
-  margin-bottom: 0.2rem;
-}
-
-.fact dd {
-  margin: 0;
-  font-size: 0.95rem;
-}
-
 /* Figures */
 
 .project-figure {
@@ -475,16 +449,13 @@
   box-shadow: none;
 }
 
-.project-figure--plain figcaption {
-  text-align: center;
-}
-
 .project-figure figcaption {
   margin-top: 0.7rem;
   font-family: var(--font-mono);
   font-size: 0.72rem;
   line-height: 1.6;
   color: var(--muted);
+  text-align: center;
 }
 
 /* Break the lead image out past the text column on wide screens. */
@@ -689,4 +660,24 @@
 .bodyart-nodes circle {
   fill: var(--accent);
   opacity: 0.45;
+}
+
+/* A figure sitting inside the writing, rather than in the pile at the end. */
+.project-figure--inline {
+  margin: 1.5rem 0 0;
+}
+
+.project-figure--inline img {
+  max-height: 420px;
+}
+
+/* A lead photo that reads better below full column width. */
+.project-figure--small img {
+  max-width: min(100%, 470px);
+}
+
+.project-figure--small figcaption {
+  max-width: 470px;
+  margin-left: auto;
+  margin-right: auto;
 }

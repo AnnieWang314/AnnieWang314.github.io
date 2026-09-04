@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { entries, label, type Entry } from "./entries";
-import { details, PROJECT_PAGES_ENABLED } from "./details";
+import { details, pageIsLive } from "./details";
 import { projectImage } from "./projectImages";
 import AutoscaleArt from "./AutoscaleArt";
 import SonicBodyArt from "./SonicBodyArt";
@@ -10,7 +10,8 @@ function tileImage(entry: Entry) {
   // An explicit tile image wins over the page's lead image.
   if (entry.tile?.image) {
     const src = projectImage(entry.tile.image);
-    if (src) return { src, alt: entry.title, transparent: false };
+    if (src)
+      return { src, alt: entry.title, transparent: Boolean(entry.tile.contain) };
   }
   if (entry.slug) {
     for (const img of details[entry.slug]?.images ?? []) {
@@ -61,8 +62,8 @@ const Tile: React.FC<{ entry: Entry }> = ({ entry }) => {
     </>
   );
 
-  // Its own page if it has one and pages are on.
-  if (entry.slug && PROJECT_PAGES_ENABLED) {
+  // Its own page, if that page is live yet.
+  if (pageIsLive(entry.slug)) {
     return (
       <Link to={`/work/${entry.slug}`} className="tile">
         {inner}
@@ -71,7 +72,10 @@ const Tile: React.FC<{ entry: Entry }> = ({ entry }) => {
   }
 
   // Entries with no page of their own still link out to the real thing.
-  const href = entry.slug ? undefined : (entry.links?.demo ?? entry.links?.github);
+  // Anything without a live page still links out to the real thing.
+  const href = pageIsLive(entry.slug)
+    ? undefined
+    : (entry.links?.demo ?? entry.links?.github);
   if (href) {
     return (
       <a className="tile" href={href} target="_blank" rel="noopener noreferrer">
@@ -85,9 +89,9 @@ const Tile: React.FC<{ entry: Entry }> = ({ entry }) => {
 
 const Work: React.FC = () => (
   <div>
-    <div className="page-header">
+    {/* <div className="page-header">
       <h1 className="lede">i like building.</h1>
-    </div>
+    </div> */}
 
     <div className="gallery">
       {entries
