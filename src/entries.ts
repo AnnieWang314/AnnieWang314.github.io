@@ -98,8 +98,8 @@ export const entries: Entry[] = [
     title: "Somniac",
     slug: "somniac",
     // The page shows the band upright; the grid wants a landscape crop.
-    // The whole band, shown end to end rather than cropped into the box.
-    tile: { image: "somniac-tile.jpg", contain: true },
+    // A 4:3 crop of the band, so it fills the tile edge to edge.
+    tile: { image: "somniac-tile.jpg" },
     org: "YC Summer Fellow",
     dates: "2025 Aug",
     points: [
