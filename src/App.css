@@ -681,3 +681,10 @@
   margin-left: auto;
   margin-right: auto;
 }
+
+/* The date and role line above a project title reads as ordinary title case,
+   not the all-caps label style used elsewhere. */
+.project-header .eyebrow {
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
