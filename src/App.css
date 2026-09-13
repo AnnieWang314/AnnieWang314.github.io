@@ -695,9 +695,16 @@
   position: relative;
 }
 
+/* At least a full window tall, so short pages on big screens are covered to
+   the bottom (the banana layer is only as tall as this). */
+.app--banana {
+  min-height: calc(100vh - 7.25rem); /* minus #root's top and bottom padding */
+}
+
+/* Spans the whole page: #root's full height and the window's full width. */
 .banana-layer {
   position: absolute;
-  top: -3rem;
+  top: -2.25rem;
   bottom: -5rem;
   left: 50%;
   width: 100vw;
@@ -707,29 +714,21 @@
   z-index: 0;
 }
 
+/* Positioned every frame by the physics in Bananas.tsx. */
 .banana-layer span {
   position: absolute;
+  left: 0;
+  top: 0;
+  width: 1em;
+  height: 1em;
   line-height: 1;
+  text-align: center;
   user-select: none;
-  transform: rotate(var(--rot));
-  /* Duration and delay come from each banana's inline style. */
-  animation: banana-drift 30s ease-in-out infinite alternate;
 }
 
-/* Drift to one side and back, turning a little on the way, like a cloud. */
-@keyframes banana-drift {
-  from {
-    transform: translate(0, 0) rotate(var(--rot));
-  }
-  to {
-    transform: translate(var(--dx), var(--dy)) rotate(calc(var(--rot) + var(--spin)));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .banana-layer span {
-    animation: none !important;
-  }
+/* Hidden until the first frame places them, so nothing flashes in a corner. */
+.banana-layer:not([data-ready]) span {
+  visibility: hidden;
 }
 
 /* Content sits above the bananas so it stays readable and clickable. */

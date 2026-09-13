@@ -14,9 +14,9 @@ export const BANANA = import.meta.env.VITE_BANANA === "1";
 const EMOJI = "🍌";
 
 /** Share of words that get a banana after them. */
-const WORD_RATE = 0.26;
+const WORD_RATE = 0.2;
 /** Share of short labels ("Somniac", "HackMIT") that get one on the end. */
-const LABEL_RATE = 0.7;
+const LABEL_RATE = 0.55;
 
 /** FNV-1a. Turns a seed plus a string into a stable number. */
 export function hash(s: string): number {

@@ -1,56 +1,94 @@
-import { useContext, useEffect, useState, type CSSProperties } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { BANANA, BananaSeed, chance, hash } from "./banana";
+import { BANANA, BananaSeed, hash } from "./banana";
+import { crowdFor, sizeOf, spawn, step, type Body } from "./bananaPhysics";
 
-/** Roughly one banana per this many pixels of page height, within limits. */
-const PX_PER_BANANA = 18;
-const MIN_BANANAS = 80;
-const MAX_BANANAS = 220;
-
-/** Where one banana sits, and how it floats — every value repeatable for a seed. */
-function drift(seed: number, i: number): CSSProperties {
-  const r = (k: number) => chance(seed, i * 10 + k);
-  const sign = (k: number) => (r(k) < 0.5 ? -1 : 1);
-  const duration = 16 + r(4) * 24; // 16–40s per swing: slow, like clouds
-
-  return {
-    top: `${(r(0) * 100).toFixed(2)}%`,
-    left: `${(r(1) * 100).toFixed(2)}%`,
-    fontSize: `${Math.round(14 + r(2) * 34)}px`,
-    "--rot": `${Math.round(r(3) * 360)}deg`,
-    "--dx": `${Math.round(sign(5) * (30 + r(6) * 90))}px`,
-    "--dy": `${Math.round(sign(7) * (8 + r(8) * 30))}px`,
-    "--spin": `${Math.round(sign(9) * (8 + r(9) * 30))}deg`,
-    animationDuration: `${duration.toFixed(1)}s`,
-    // Negative delay starts each one partway through, so they don't all set off together.
-    animationDelay: `-${(r(4) * duration).toFixed(1)}s`,
-  } as CSSProperties;
-}
-
-/** Bananas strewn across the whole page, behind the content. banannie.wang only. */
+/**
+ * Bananas drifting across the whole page, bumping gently into each other and
+ * the edges. banannie.wang only.
+ */
 export default function Bananas() {
   const seed = useContext(BananaSeed);
   const { pathname } = useLocation();
+  const active = BANANA && seed !== null;
+  const pageSeed = (hash(pathname.replace(/\/+$/, "") || "/") ^ (seed ?? 0)) >>> 0;
+
+  const layerRef = useRef<HTMLDivElement>(null);
+  const spanRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const bodies = useRef<Body[]>([]);
+  const bounds = useRef({ w: 0, h: 0 });
   const [count, setCount] = useState(0);
 
-  // Sized from the page itself, so a long project page is as crowded as home.
+  // Measure the page and size the crowd from its area; follow it as it resizes.
   useEffect(() => {
-    if (!BANANA || seed === null) return;
-    const height = document.documentElement.scrollHeight;
-    setCount(
-      Math.min(MAX_BANANAS, Math.max(MIN_BANANAS, Math.round(height / PX_PER_BANANA)))
-    );
-  }, [seed, pathname]);
+    const layer = layerRef.current;
+    if (!active || !layer) return;
+    bodies.current = []; // a new page or a new load starts a fresh layout
 
-  if (!BANANA || seed === null || count === 0) return null;
+    const measure = () => {
+      const { width, height } = layer.getBoundingClientRect();
+      bounds.current = { w: width, h: height };
+      setCount(crowdFor(width, height));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(layer);
+    return () => observer.disconnect();
+  }, [active, pageSeed]);
 
-  // New layout per page and per load, but steady while you're on the page.
-  const pageSeed = (hash(pathname.replace(/\/+$/, "") || "/") ^ seed) >>> 0;
+  // Grow or shrink the crowd to match, keeping the bananas already out there.
+  useEffect(() => {
+    if (!active) return;
+    const list = bodies.current;
+    const { w, h } = bounds.current;
+    while (list.length < count) list.push(spawn(pageSeed, list.length, w, h, list));
+    list.length = count;
+  }, [active, count, pageSeed]);
+
+  // Once a frame: move and bounce, then draw.
+  useEffect(() => {
+    const layer = layerRef.current;
+    if (!active || !layer || count === 0) return;
+    // Still placed, just not moving, for people who've asked for less motion.
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let frame = 0;
+    let last = performance.now();
+
+    const tick = (now: number) => {
+      // Capped so coming back to a background tab doesn't teleport everything.
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const { w, h } = bounds.current;
+      if (!reduced) step(bodies.current, dt, w, h);
+
+      bodies.current.forEach((b, i) => {
+        const el = spanRefs.current[i];
+        if (!el) return;
+        el.style.transform = `translate3d(${(b.x - b.size / 2).toFixed(1)}px, ${(
+          b.y -
+          b.size / 2
+        ).toFixed(1)}px, 0) rotate(${b.angle.toFixed(1)}deg)`;
+      });
+      layer.dataset.ready = "";
+      frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [active, count]);
+
+  if (!active) return null;
 
   return (
-    <div className="banana-layer" aria-hidden="true">
+    <div className="banana-layer" ref={layerRef} aria-hidden="true">
       {Array.from({ length: count }, (_, i) => (
-        <span key={i} style={drift(pageSeed, i)}>
+        <span
+          key={i}
+          ref={(el) => {
+            spanRefs.current[i] = el;
+          }}
+          style={{ fontSize: `${sizeOf(pageSeed, i)}px` }}
+        >
           🍌
         </span>
       ))}
