@@ -1,4 +1,5 @@
 import { Link, Navigate, useParams } from "react-router-dom";
+import { useBanana } from "./banana";
 import { FaArrowLeft, FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 import { entries, label, sublabel } from "./entries";
 import { details, pageIsLive } from "./details";
@@ -30,6 +31,8 @@ function withLinks(text: string) {
 
 const ProjectPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  // Before any early return, so hooks run in the same order every render.
+  const banana = useBanana();
 
   // Pages that were folded into another one; keep their URLs working.
   const merged: Record<string, string> = {
@@ -61,7 +64,7 @@ const ProjectPage: React.FC = () => {
     .map((img) => ({ ...img, src: projectImage(img.file) }))
     .filter((img): img is typeof img & { src: string } => Boolean(img.src));
 
-  return (
+  return banana(
     <article className="project">
       <Link to="/work" className="back-link">
         <FaArrowLeft aria-hidden="true" /> work

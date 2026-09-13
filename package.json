@@ -11,7 +11,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "dev:banana": "vite --mode banana",
+    "build:banana": "tsc -b && vite build --mode banana --outDir dist-banana && vite build --ssr src/entry-server.tsx --mode banana --outDir dist-banana-ssr && node scripts/prerender.mjs dist-banana dist-banana-ssr",
+    "deploy:banana": "npm run build:banana && gh-pages -d dist-banana -r https://github.com/AnnieWang314/banannie.git"
   },
   "dependencies": {
     "gh-pages": "^6.3.0",

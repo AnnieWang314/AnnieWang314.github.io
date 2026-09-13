@@ -12,9 +12,11 @@ import { readFileSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 
-const dist = "dist";
-const ssrEntry = pathToFileURL(join("dist-ssr", "entry-server.js")).href;
-const { render, liveRoutes, pageMeta, SITE } = await import(ssrEntry);
+// `node scripts/prerender.mjs [dist] [ssrDir]` — defaults are the wannie.wang build.
+const dist = process.argv[2] ?? "dist";
+const ssrDir = process.argv[3] ?? "dist-ssr";
+const ssrEntry = pathToFileURL(join(ssrDir, "entry-server.js")).href;
+const { render, liveRoutes, pageMeta, SITE, BANANA } = await import(ssrEntry);
 
 const template = readFileSync(join(dist, "index.html"), "utf8");
 
@@ -47,7 +49,9 @@ for (const route of routes) {
   html = swap(html, /<meta\s+property="og:url"[\s\S]*?\/>/,
     `<meta property="og:url" content="${attr(meta.url)}" />`, "og:url");
 
-  const extra = [`<link rel="canonical" href="${attr(meta.url)}" />`];
+  const extra = meta.noindex
+    ? [`<meta name="robots" content="noindex" />`]
+    : [`<link rel="canonical" href="${attr(meta.url)}" />`];
   if (meta.image) {
     extra.push(`<meta property="og:image" content="${attr(meta.image)}" />`);
     extra.push(`<meta name="twitter:image" content="${attr(meta.image)}" />`);
@@ -66,6 +70,16 @@ for (const route of routes) {
   writeFileSync(join(dir, "index.html"), html);
 }
 
+if (BANANA) {
+  // banannie.wang: its own domain, no sitemap, and crawlable only so Google can
+  // see the noindex on every page.
+  writeFileSync(join(dist, "CNAME"), "banannie.wang\n");
+  writeFileSync(join(dist, "robots.txt"), "User-agent: *\nAllow: /\n");
+  rmSync(ssrDir, { recursive: true, force: true });
+  console.log(`prerender (banana): ${routes.length} pages, noindex, CNAME banannie.wang`);
+  process.exit(0);
+}
+
 const today = new Date().toISOString().slice(0, 10);
 const urls = routes
   .map((r) => `  <url>\n    <loc>${pageMeta(r).url}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`)
@@ -77,7 +91,7 @@ writeFileSync(
 writeFileSync(join(dist, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
 
 // The server bundle only exists to produce the files above.
-rmSync("dist-ssr", { recursive: true, force: true });
+rmSync(ssrDir, { recursive: true, force: true });
 
 console.log(`prerender: ${routes.length} pages -> ${routes.join(", ")}`);
 console.log("prerender: wrote 404.html, sitemap.xml, robots.txt");

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useBanana } from "./banana";
 import { entries, label, type Entry } from "./entries";
 import { details, pageIsLive } from "./details";
 import { projectImage } from "./projectImages";
@@ -27,6 +28,7 @@ function tagline(entry: Entry) {
 }
 
 const Tile: React.FC<{ entry: Entry }> = ({ entry }) => {
+  const banana = useBanana();
   const image = tileImage(entry);
 
   // A photo always wins; artwork fills in until there is one.
@@ -36,7 +38,7 @@ const Tile: React.FC<{ entry: Entry }> = ({ entry }) => {
       ? details[entry.slug]?.art
       : entry.tile?.art;
 
-  const inner = (
+  const inner = banana(
     <>
       {art ? (
         <div className="tile-media tile-media--art">
@@ -87,7 +89,9 @@ const Tile: React.FC<{ entry: Entry }> = ({ entry }) => {
   return <div className="tile tile--flat">{inner}</div>;
 };
 
-const Work: React.FC = () => (
+const Work: React.FC = () => {
+  const banana = useBanana();
+  return banana(
   <div>
     {/* <div className="page-header">
       <h1 className="lede">i like building.</h1>
@@ -101,6 +105,7 @@ const Work: React.FC = () => (
         ))}
     </div>
   </div>
-);
+  );
+};
 
 export default Work;

@@ -5,6 +5,7 @@ import { StaticRouter } from "react-router-dom";
 import App from "./App";
 
 export { liveRoutes, pageMeta, SITE } from "./seo";
+export { BANANA } from "./banana";
 
 /** Renders one page to HTML at build time. Only scripts/prerender.mjs calls this. */
 export function render(url: string) {

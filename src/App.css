@@ -688,3 +688,58 @@
   text-transform: none;
   letter-spacing: 0.02em;
 }
+
+/* ============ banannie.wang ============ */
+
+.app {
+  position: relative;
+}
+
+.banana-layer {
+  position: absolute;
+  top: -3rem;
+  bottom: -5rem;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.banana-layer span {
+  position: absolute;
+  line-height: 1;
+  user-select: none;
+  transform: rotate(var(--rot));
+  /* Duration and delay come from each banana's inline style. */
+  animation: banana-drift 30s ease-in-out infinite alternate;
+}
+
+/* Drift to one side and back, turning a little on the way, like a cloud. */
+@keyframes banana-drift {
+  from {
+    transform: translate(0, 0) rotate(var(--rot));
+  }
+  to {
+    transform: translate(var(--dx), var(--dy)) rotate(calc(var(--rot) + var(--spin)));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banana-layer span {
+    animation: none !important;
+  }
+}
+
+/* Content sits above the bananas so it stays readable and clickable. */
+.app--banana > header,
+.app--banana > main {
+  position: relative;
+  z-index: 1;
+}
+
+/* The full-width banana layer shouldn't make the page scroll sideways. */
+html:has(.banana-layer) {
+  overflow-x: clip;
+}

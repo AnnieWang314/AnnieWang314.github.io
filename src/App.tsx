@@ -5,10 +5,19 @@ import Home from "./Home";
 import Work from "./Work";
 import ProjectPage from "./ProjectPage";
 import { pageMeta } from "./seo";
+import { BANANA, BananaSeed } from "./banana";
+import Bananas from "./Bananas";
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const [bananaSeed, setBananaSeed] = useState<number | null>(null);
+
+  // A fresh random seed on every page load, set after hydration so the
+  // pre-built HTML still matches what React renders first.
+  useEffect(() => {
+    if (BANANA) setBananaSeed((Math.random() * 2 ** 32) >>> 0);
+  }, []);
 
   // Close the mobile menu, return to the top, and keep the tab title in step
   // with the page whenever the route changes.
@@ -19,14 +28,16 @@ function App() {
   }, [location.pathname]);
 
   return (
-    <div>
+    <BananaSeed.Provider value={bananaSeed}>
+    <div className={BANANA ? "app app--banana" : "app"}>
+      <Bananas />
       <a className="skip-link" href="#main">
         Skip to content
       </a>
 
       <header className="navbar">
         <div className="navbar-brand">
-          <NavLink to="/">Annie Wang</NavLink>
+          <NavLink to="/">{BANANA ? "Banannie Wang" : "Annie Wang"}</NavLink>
         </div>
 
         <button
@@ -55,6 +66,7 @@ function App() {
         </Routes>
       </main>
     </div>
+    </BananaSeed.Provider>
   );
 }
 

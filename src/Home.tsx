@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useBanana } from "./banana";
 import { FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";
 // 400px source for a 172px circle; the 3504px original was a 926KB download.
 import headshot from "./assets/headshot-400.jpg";
@@ -12,7 +13,8 @@ const now: { label: string; body: React.ReactNode }[] = [
 ];
 
 const Home: React.FC = () => {
-  return (
+  const banana = useBanana();
+  return banana(
     <div>
       <div className="hero">
         <div>
