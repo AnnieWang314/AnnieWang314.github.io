@@ -4,15 +4,18 @@ import "./App.css";
 import Home from "./Home";
 import Work from "./Work";
 import ProjectPage from "./ProjectPage";
+import { pageMeta } from "./seo";
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
 
-  // Close the mobile menu and return to the top whenever the route changes.
+  // Close the mobile menu, return to the top, and keep the tab title in step
+  // with the page whenever the route changes.
   useEffect(() => {
     setMenuOpen(false);
     window.scrollTo(0, 0);
+    document.title = pageMeta(location.pathname).title;
   }, [location.pathname]);
 
   return (
