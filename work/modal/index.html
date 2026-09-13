@@ -8,21 +8,15 @@
     <link rel="apple-touch-icon" href="/icon-180.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Annie Wang</title>
-    <meta
-      name="description"
-      content="Annie Wang — MIT CS student working on embedded systems, distributed systems, and the machines people wear."
-    />
+    <title>Autoscaling at Modal — Annie Wang</title>
+    <meta name="description" content="When should a container exist, and when should it stop?" />
     <meta name="theme-color" content="#dceeeb" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0c1615" media="(prefers-color-scheme: dark)" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Annie Wang" />
-    <meta
-      property="og:description"
-      content="MIT CS student working on embedded systems, distributed systems, and the machines people wear."
-    />
-    <meta property="og:url" content="https://wannie.wang/" />
+    <meta property="og:title" content="Autoscaling at Modal — Annie Wang" />
+    <meta property="og:description" content="When should a container exist, and when should it stop?" />
+    <meta property="og:url" content="https://wannie.wang/work/modal/" />
     <meta name="twitter:card" content="summary" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -31,10 +25,11 @@
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="/assets/index-BZ-lkemr.js"></script>
+    <script type="module" crossorigin src="/assets/index-Cey3inW0.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-C3wJ7_FR.css">
+      <link rel="canonical" href="https://wannie.wang/work/modal/" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><div><a class="skip-link" href="#main">Skip to content</a><header class="navbar"><div class="navbar-brand"><a class="" href="/" data-discover="true">Annie Wang</a></div><button class="hamburger " aria-expanded="false" aria-label="Toggle navigation">☰</button><nav class="navbar-links "><a class="" href="/" data-discover="true">home</a><a aria-current="page" class="active" href="/work" data-discover="true">work</a></nav></header><main id="main"><article class="project"><a class="back-link" href="/work" data-discover="true"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M257.5 445.1l-22.2 22.2c-9.4 9.4-24.6 9.4-33.9 0L7 273c-9.4-9.4-9.4-24.6 0-33.9L201.4 44.7c9.4-9.4 24.6-9.4 33.9 0l22.2 22.2c9.5 9.5 9.3 25-.4 34.3L136.6 216H424c13.3 0 24 10.7 24 24v32c0 13.3-10.7 24-24 24H136.6l120.5 114.8c9.8 9.3 10 24.8.4 34.3z"></path></svg> work</a><header class="project-header"><p class="eyebrow">2026 Aug<!-- --> · Member of Technical Staff Intern</p><h1 class="lede">Autoscaling at Modal</h1><p class="project-blurb">When should a container exist, and when should it stop?</p></header><div class="project-body"><section><p>Modal runs your code in containers, on machines you never have to think about. The autoscaler determines how many of those containers exist for your function.</p><p>I spent the summer working on this. Besides searching for the best formula or scaling algorithm, the hardest part was testing these potential changes.</p></section><section><h2>You can&#x27;t A/B test an autoscaler</h2><p>The naive way is to ship a change and watch. It&#x27;s slow, expensive, and not fair: traffic does not repeat exactly in production, so two versions never face the same test.</p><p>So I built a simulator. It works as a discrete event model with one controller loop and one coroutine per simulated container. It can replay real production traffic, or generate synthetic patterns like spikes, waves, or redeploys. This means hours of traffic play in a couple seconds.</p><p>With this, I could run different approaches against identical traffic across more than a hundred scenarios, and compare them on latency, cost, and wasted capacity. There was no clear winner but useful tradeoff curves instead.</p></section></div><nav class="project-nav"><span></span><a class="project-nav-next" href="/work/thermominator" data-discover="true"><span class="eyebrow">Next</span>Thermominator</a></nav></article></main></div></div>
   </body>
 </html>

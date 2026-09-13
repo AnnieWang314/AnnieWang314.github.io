@@ -8,21 +8,15 @@
     <link rel="apple-touch-icon" href="/icon-180.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Annie Wang</title>
-    <meta
-      name="description"
-      content="Annie Wang — MIT CS student working on embedded systems, distributed systems, and the machines people wear."
-    />
+    <title>Thermominator — Annie Wang</title>
+    <meta name="description" content="A wearable heat monitor." />
     <meta name="theme-color" content="#dceeeb" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0c1615" media="(prefers-color-scheme: dark)" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Annie Wang" />
-    <meta
-      property="og:description"
-      content="MIT CS student working on embedded systems, distributed systems, and the machines people wear."
-    />
-    <meta property="og:url" content="https://wannie.wang/" />
+    <meta property="og:title" content="Thermominator — Annie Wang" />
+    <meta property="og:description" content="A wearable heat monitor." />
+    <meta property="og:url" content="https://wannie.wang/work/thermominator/" />
     <meta name="twitter:card" content="summary" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -31,10 +25,13 @@
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="/assets/index-BZ-lkemr.js"></script>
+    <script type="module" crossorigin src="/assets/index-Cey3inW0.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-C3wJ7_FR.css">
+      <link rel="canonical" href="https://wannie.wang/work/thermominator/" />
+    <meta property="og:image" content="https://wannie.wang/assets/thermominator-device-DYZWeuau.png" />
+    <meta name="twitter:image" content="https://wannie.wang/assets/thermominator-device-DYZWeuau.png" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><link rel="preload" as="image" href="/assets/thermominator-device-DYZWeuau.png"/><div><a class="skip-link" href="#main">Skip to content</a><header class="navbar"><div class="navbar-brand"><a class="" href="/" data-discover="true">Annie Wang</a></div><button class="hamburger " aria-expanded="false" aria-label="Toggle navigation">☰</button><nav class="navbar-links "><a class="" href="/" data-discover="true">home</a><a aria-current="page" class="active" href="/work" data-discover="true">work</a></nav></header><main id="main"><article class="project"><a class="back-link" href="/work" data-discover="true"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" aria-hidden="true" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M257.5 445.1l-22.2 22.2c-9.4 9.4-24.6 9.4-33.9 0L7 273c-9.4-9.4-9.4-24.6 0-33.9L201.4 44.7c9.4-9.4 24.6-9.4 33.9 0l22.2 22.2c9.5 9.5 9.3 25-.4 34.3L136.6 216H424c13.3 0 24 10.7 24 24v32c0 13.3-10.7 24-24 24H136.6l120.5 114.8c9.8 9.3 10 24.8.4 34.3z"></path></svg> work</a><header class="project-header"><p class="eyebrow">2026 May<!-- --> · Firmware Lead</p><h1 class="lede">Thermominator</h1><p class="project-blurb">A wearable heat monitor.</p></header><figure class="project-figure project-figure--lead project-figure--plain"><img src="/assets/thermominator-device-DYZWeuau.png" alt="CAD render of the Thermominator" loading="eager"/><figcaption>The enclosure with its lid off. Includes LCD display, buttons, USB-C charging, battery.</figcaption></figure><div class="project-body"><section><p>Thermominator is a personal heat monitor. It&#x27;s a wearable keychain-like device that tracks heat exposure. My team of 8 built this for MIT Office of Sustainability as part of our 6.900 project. I led firmware development.</p></section><section><h2>Sleep is the whole problem</h2><p>We were building a wearable greatly constrained by its battery. On an ESP32-C3, the difference between a device that lasts hours and one that lasts days is mainly about how aggressively it sleeps.</p><p>I wrote the firmware as a C++ state machine between modem sleep, light sleep, and deep sleep, so that the device would sleep as much as possible without trading off too much functionality.</p></section><section><h2>The integration surface</h2><p>Firmware is where every other subteam&#x27;s work has to meet: WiFi communication, the sensor stack, LCD display, and our backend server connection.</p></section></div><nav class="project-nav"><a href="/work/modal" data-discover="true"><span class="eyebrow">Previous</span>Autoscaling at Modal</a><a class="project-nav-next" href="/work/somniac" data-discover="true"><span class="eyebrow">Next</span>Somniac</a></nav></article></main></div></div>
   </body>
 </html>
